@@ -15,9 +15,9 @@ func CreateRandomFile(path string, size uint64) (fileName string, err error) {
 
 	extensions := []string{".txt", ".png", ".svg", ".json", ".xml"}
 	extension := extensions[rand.Intn(len(extensions))]
-	fileName = fmt.Sprintf("%s/%s%s", path, lib.RandomString(10), extension)
+	fileName = fmt.Sprintf("%s%s", lib.RandomString(10), extension)
 
-	file, err := os.Create(fileName)
+	file, err := os.Create(fmt.Sprintf("%s/%s", path, fileName))
 	if err != nil {
 		return "", err
 	}
