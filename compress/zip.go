@@ -72,9 +72,7 @@ func (a *ZipArchive) AddFile(folderPath, filePath string, fileInfo os.FileInfo) 
 		return err
 	}
 	header.Name = filepath.ToSlash(relPath)
-	if err != nil {
-		return err
-	}
+	header.Method = zip.Deflate
 
 	// Create a writer for the file in the ZIP archive
 	writer, err := a.writer.CreateHeader(header)

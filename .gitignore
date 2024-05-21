@@ -1,3 +1,5 @@
 mockup_files/
 *.gz
 *.zip
+
+temp-*
