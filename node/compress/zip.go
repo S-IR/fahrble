@@ -10,6 +10,7 @@ import (
 
 	"github.com/S-IR/freible/info"
 	"github.com/klauspost/compress/zip"
+	"github.com/s-ir/fahrble/node/ledger"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
@@ -60,11 +61,11 @@ func (a *ZipArchive) WriteToMemory() []byte {
 	return a.buffer.Bytes()
 }
 
-func (a *ZipArchive) AddFile(folderPath, filePath string, fileInfo os.FileInfo) error {
+func (a *ZipArchive) AddFile(folderPath, filePath string, fileInfo os.FileInfo) (*ledger.Ledger, error) {
 	// Open the file
 	file, err := os.Open(filePath)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	defer file.Close()
 
@@ -73,12 +74,12 @@ func (a *ZipArchive) AddFile(folderPath, filePath string, fileInfo os.FileInfo) 
 
 	header, err := zip.FileInfoHeader(fileInfo)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	relPath, err := filepath.Rel(folderPath, filePath)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	header.Name = filepath.ToSlash(relPath)
 	header.Method = zip.Deflate
@@ -86,13 +87,13 @@ func (a *ZipArchive) AddFile(folderPath, filePath string, fileInfo os.FileInfo) 
 	// Create a writer for the file in the ZIP archive
 	writer, err := a.writer.CreateHeader(header)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	// Calculate SHA1 hash of the file contents
 	shaHash := sha1.New()
 	if _, err := io.Copy(shaHash, file); err != nil {
-		return err
+		return nil, err
 	}
 	SHA := shaHash.Sum(nil)
 
@@ -107,16 +108,15 @@ func (a *ZipArchive) AddFile(folderPath, filePath string, fileInfo os.FileInfo) 
 	// Reset the file offset to beginning
 	_, err = file.Seek(0, io.SeekStart)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	// Copy the file's content to the ZIP archive
 	_, err = io.Copy(writer, file)
 	if err != nil {
-		return err
+		return nil, err
 	}
-
-	return nil
+	return ledger.GenerateLedger(*file, fileInfo), nil
 }
 func (a *ZipArchive) WriteTo(path string) error {
 	if err := a.writer.Close(); err != nil {

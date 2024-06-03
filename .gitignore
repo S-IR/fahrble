@@ -3,3 +3,4 @@ mockup_files/
 *.zip
 
 temp-*
+config.json

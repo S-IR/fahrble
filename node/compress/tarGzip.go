@@ -10,6 +10,7 @@ import (
 	"path/filepath"
 
 	"github.com/S-IR/freible/info"
+	"github.com/s-ir/fahrble/node/ledger"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
@@ -33,11 +34,11 @@ func NewGzipTarArchive() *TarGzipArchive {
 		infos:      []*info.File{},
 	}
 }
-func (a *TarGzipArchive) AddFile(folderPath, filePath string, fileInfo os.FileInfo) error {
+func (a *TarGzipArchive) AddFile(folderPath, filePath string, fileInfo os.FileInfo) (*ledger.Ledger, error) {
 	// Open the file
 	file, err := os.Open(filePath)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	defer file.Close()
 
@@ -49,23 +50,23 @@ func (a *TarGzipArchive) AddFile(folderPath, filePath string, fileInfo os.FileIn
 	}
 
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	header, err := tar.FileInfoHeader(fileInfo, relPath)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	header.Name = relPath
 
 	if err := a.tarWriter.WriteHeader(header); err != nil {
-		return err
+		return nil, err
 	}
 	// Calculate SHA1 hash of the file contents
 	shaHash := sha1.New()
 	if _, err := io.Copy(shaHash, file); err != nil {
-		return err
+		return nil, err
 	}
 	SHA := shaHash.Sum(nil)
 
@@ -76,19 +77,19 @@ func (a *TarGzipArchive) AddFile(folderPath, filePath string, fileInfo os.FileIn
 		LastModified: timestamppb.New(fileInfo.ModTime()),
 	})
 	if fileInfo.IsDir() {
-		return nil
+		return nil, nil
 	}
 	// Reset the file offset to beginning
 	_, err = file.Seek(0, io.SeekStart)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	_, err = io.Copy(a.tarWriter, file)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	return ledger.GenerateLedger(*file, fileInfo), nil
 }
 func (a *TarGzipArchive) WriteToMemory() []byte {
 	if err := a.tarWriter.Close(); err != nil {

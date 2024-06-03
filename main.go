@@ -3,9 +3,10 @@ package main
 import (
 	"os"
 
-	"github.com/s-ir/fahrble/compress"
-	"github.com/s-ir/fahrble/compress/generateMockups"
+	"github.com/S-IR/freible/compress/generateMockups"
 	"github.com/s-ir/fahrble/encrypt"
+	"github.com/s-ir/fahrble/node/compress"
+	"github.com/s-ir/fahrble/node/ledger"
 )
 
 func main() {
@@ -18,9 +19,11 @@ func main() {
 		panic(err)
 	}
 
-	zipBytes, err := compress.ArchiveFolder(mockupFolderName, compress.ArchiveConfig{
+	zipBytes, backup, err := compress.ArchiveFolder(mockupFolderName, compress.ArchiveConfig{
 		ArchiveType: compress.ZipType,
 	})
+
+	ledger.StoreBackup(backup, "assets")
 
 	if err != nil {
 		panic(err)

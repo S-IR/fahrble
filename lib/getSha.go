@@ -1,14 +1,14 @@
 package lib
 
 import (
-	"hash"
+	"crypto/sha256"
 	"io"
 	"log"
 	"os"
 )
 
-func GetShaHash(file *os.File, shaHash hash.Hash) []byte {
-
+func GetShaHash(file *os.File) []byte {
+	shaHash := sha256.New()
 	if _, err := io.Copy(shaHash, file); err != nil {
 		log.Fatalf("failed to copy file contents to hash: %v", err)
 	}

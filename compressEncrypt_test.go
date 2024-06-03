@@ -6,9 +6,9 @@ import (
 	"os"
 	"testing"
 
-	"github.com/s-ir/fahrble/compress"
-	"github.com/s-ir/fahrble/compress/generateMockups"
+	"github.com/S-IR/freible/compress/generateMockups"
 	"github.com/s-ir/fahrble/encrypt"
+	"github.com/s-ir/fahrble/node/compress"
 )
 
 func TestCompressAndEncrypt(t *testing.T) {
@@ -21,7 +21,7 @@ func TestCompressAndEncrypt(t *testing.T) {
 	defer os.RemoveAll(folderName)
 
 	// Compress the folder
-	zipBytes, err := compress.ArchiveFolder(folderName, compress.ArchiveConfig{
+	zipBytes, _, err := compress.ArchiveFolder(folderName, compress.ArchiveConfig{
 		ArchiveType: compress.ZipType,
 	})
 	if err != nil {

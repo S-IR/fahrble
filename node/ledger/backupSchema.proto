@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+option go_package = "./ledger";
+
+message Ledger {
+    bytes sha = 1;
+    string name = 2;
+    google.protobuf.Timestamp last_modified = 3;
+    uint64 size = 4; // size is in KB
+  }
+
+
+  //dependency backups refers to backups that this backup is either dependent on or (imorted backups) or is imported by (backups to export TO)
+  message DependencyBackup {
+    string name= 1;
+    repeated Ledger ledgers = 2;
+  }
+
+  //BACKUPS THAT WE IMPORT LEDGERS FROM
+  message BackupsImported {
+      repeated DependencyBackup BackupSchema = 1;
+  }
+
+  //BACKUPS THAT WE EXPORT TO
+  message BackupsExportedTo {
+    repeated DependencyBackup BackupSchema = 1;
+  }
+
+  message BackupSchema {
+    string name = 1;
+    google.protobuf.Timestamp last_modified = 2;
+    repeated Ledger ledgers = 3;
+    
+  
+  }
