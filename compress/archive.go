@@ -10,6 +10,7 @@ import (
 type Archive interface {
 	AddFile(folderPath, filePath string, fileInfo os.FileInfo) error
 	WriteTo(outputPath string) error
+	WriteToMemory() []byte
 }
 
 // ArchiveType represents the type of archive format.
@@ -25,13 +26,13 @@ type ArchiveConfig struct {
 	CompressionLevel uint
 }
 
-func ArchiveFolder(folderPath, outputFile string, config ArchiveConfig) error {
+func ArchiveFolder(folderPath string, config ArchiveConfig) ([]byte, error) {
 	info, err := os.Stat(folderPath)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	if !info.IsDir() {
-		return errors.New("you must provide a folder")
+		return nil, errors.New("you must provide a folder")
 	}
 
 	var archive Archive
@@ -46,14 +47,10 @@ func ArchiveFolder(folderPath, outputFile string, config ArchiveConfig) error {
 
 	err = addFilesToArchive(archive, folderPath)
 	if err != nil {
-		return err
-	}
-	err = archive.WriteTo(outputFile)
-	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	return archive.WriteToMemory(), nil
 }
 
 // Function to add files to the ZIP archive

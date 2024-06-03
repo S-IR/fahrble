@@ -51,6 +51,15 @@ func NewZipArchive(configuration ...*ZipConfig) *ZipArchive {
 		infos:       []*info.File{},
 	}
 }
+
+func (a *ZipArchive) WriteToMemory() []byte {
+	if err := a.writer.Close(); err != nil {
+		panic(err)
+	}
+
+	return a.buffer.Bytes()
+}
+
 func (a *ZipArchive) AddFile(folderPath, filePath string, fileInfo os.FileInfo) error {
 	// Open the file
 	file, err := os.Open(filePath)

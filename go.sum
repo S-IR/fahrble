@@ -1,3 +1,5 @@
+github.com/S-IR/freible v0.0.0-20240521065411-3d7bac60b98d h1:ZuvlI53uPfHaC8YzEaCXyd3rNYNwyxvseq2e9DoK5Wk=
+github.com/S-IR/freible v0.0.0-20240521065411-3d7bac60b98d/go.mod h1:kwikgnR0wWt8MEJIeR3OQsYIj7DX49LITDfatviGHLo=
 github.com/google/go-cmp v0.5.5 h1:Khx7svrCpmxxtHBq5j2mp/xVjsi8hQMfNLvJFAlrGgU=
 github.com/google/go-cmp v0.5.5/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/gNBxE=
 github.com/klauspost/compress v1.17.8 h1:YcnTYrq7MikUT7k0Yb5eceMmALQPYBW/Xltxn0NAMnU=

@@ -90,6 +90,14 @@ func (a *TarGzipArchive) AddFile(folderPath, filePath string, fileInfo os.FileIn
 
 	return nil
 }
+func (a *TarGzipArchive) WriteToMemory() []byte {
+	if err := a.tarWriter.Close(); err != nil {
+		panic(err)
+	}
+
+	return a.buffer.Bytes()
+}
+
 func (a *TarGzipArchive) WriteTo(path string) error {
 
 	if err := a.tarWriter.Close(); err != nil {
